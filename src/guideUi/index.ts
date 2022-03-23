@@ -1,8 +1,9 @@
 import * as ui from '@dcl/ui-scene-utils';
+import './operator';
+import { safariMap } from './sceneMap';
 
 // welcome text
 let welcomPrompt = new ui.CustomPrompt('images/guideSprite.png', 512, 334);
-welcomPrompt.hide();
 let welcomeText = welcomPrompt.addText('Welcome to Dragon \nCity', -170, 100, new Color4(255,255,255,1), 32);
 welcomeText.text.hTextAlign = "left";
 
@@ -30,15 +31,10 @@ closeIcon.image.onClick = new OnPointerDown((e) => {
 // left plane for guide
 const guidePrompt = new ui.CustomPrompt(ui.PromptStyles.DARK, 200, 340);
 guidePrompt.closeIcon.visible = false;
-guidePrompt.background.vAlign = "center";
+guidePrompt.background.vAlign = "top";
 guidePrompt.background.hAlign = "left";
 guidePrompt.background.positionX = 12;
-guidePrompt.background.positionY = 2;
-
-
-// const uiCanvas = new UICanvas();
-
-// const leftPlane = new UIContainerRect(guidePrompt.canvas);
+guidePrompt.background.positionY = -136;
 
 const leftTextPlane = new UIContainerStack(guidePrompt.background);
 leftTextPlane.vAlign = "top";
@@ -72,91 +68,51 @@ guideText.height = "100%";
 guideText.paddingTop = 10;
 
 const safairBtn = guidePrompt.addButton("Dragon Safari", 0, -90, () => {
-    log("1");
+    safariMap.show();
 }, ui.ButtonStyles.DARK);
 safairBtn.image.height = 30;
 safairBtn.label.fontSize = 16;
 
 const learnBtn = guidePrompt.addButton("Learn More", 0, -130, () => {
-    log("1");
+    log("2");
 }, ui.ButtonStyles.DARK);
 learnBtn.image.height = 30;
 learnBtn.label.fontSize = 16;
 
-// dragon safari map 
-const safariMap = new ui.CustomPrompt('images/guideSprite.png', 320, 334);
-const safariMapBgImg = safariMap.background;
-safariMapBgImg.hAlign = 'center';
-safariMapBgImg.vAlign = 'center';
-safariMapBgImg.sourceLeft = 624;
-safariMapBgImg.sourceTop = 0;
-safariMapBgImg.sourceWidth = 624;
-safariMapBgImg.sourceHeight = 650;
-
-// close btn
-const safariMapCloseIcon = safariMap.addIcon("images/guideSprite.png", -12, -12, 32, 32, { sourceLeft: 689, sourceTop: 650, sourceWidth: 65, sourceHeight: 65 });
-safariMapCloseIcon.image.hAlign = "right";
-safariMapCloseIcon.image.vAlign = "top";
-safariMapCloseIcon.image.isPointerBlocker = true;
-safariMapCloseIcon.image.onClick = new OnPointerDown((e) => {
-    safariMap.hide();
+const openIcon = guidePrompt.addIcon("images/guideSprite.png", 0, -6, 19, 19, { sourceLeft: 755, sourceTop: 650, sourceWidth: 39, sourceHeight: 38 });
+openIcon.image.hAlign = "center";
+openIcon.image.vAlign = "top";
+openIcon.image.isPointerBlocker = true;
+let openState = true;
+openIcon.image.onClick = new OnPointerDown((e) => {
+    if(openState) {
+        guidePrompt.background.height = 32;
+        leftTextPlane.visible = false;
+        safairBtn.hide();
+        learnBtn.hide();
+        openIcon.image.sourceLeft = 794;
+    } else {
+        guidePrompt.background.height = 320;
+        leftTextPlane.visible = true;
+        safairBtn.show();
+        learnBtn.show();
+        openIcon.image.sourceLeft = 755;
+    }
+    openState = !openState;
 });
 
 
-//location icon
-const locationData = [
-    {
-        name: "Dragon Live",
-        scene: "dragonLive",
-        posX: 45,
-        posY: -138
-    },
-    {
-        name: "Fashion Week",
-        scene: "fashionWeek",
-        posX: 124,
-        posY: -210
-    },
-    {
-        name: "Dark City",
-        scene: "darkCity",
-        posX: 202,
-        posY: -138
-    },
-    {
-        name: "Fantastic Land",
-        scene: "fantasticLand",
-        posX: 266,
-        posY: -138
-    },
-    {
-        name: "BeiBei",
-        scene: "beiBei",
-        posX: 196,
-        posY: -40
-    }
-];
-locationData.map((item) => {
-    const icon = safariMap.addIcon("images/guideSprite.png", item.posX, item.posY, 27, 35, { sourceLeft: 833, sourceTop: 650, sourceWidth: 27, sourceHeight: 35 });
-    icon.image.hAlign = "left";
-    icon.image.vAlign = "top";
-    icon.image.isPointerBlocker = true;
-    icon.image.onClick = new OnPointerDown((e) => {
-        welcomPrompt.hide();
-    });
-    const name = safariMap.addText(item.name, item.posX, item.posY - 5, new Color4(1,1,1,1), 12);
-    name.text.hAlign = "left";
-    name.text.vAlign = "top";
-    name.text.width = 80;
-    name.text.hTextAlign = "center";
-    name.text.positionX = item.posX - 25;
-    if(item.scene === 'darkCity') {
-        name.text.positionY = item.posY + 55
-    }
-    else if(item.scene === 'fantasticLand') {
-        name.text.positionX = item.posX - 40;
-    }
-})
+// direct link icon
+const directLinkPrompt = new ui.CustomPrompt('images/guideSprite.png', 37, 145);
+directLinkPrompt.closeIcon.visible = false;
+directLinkPrompt.background.vAlign = "top";
+directLinkPrompt.background.hAlign = "left";
+directLinkPrompt.background.positionX = 172;
+directLinkPrompt.background.positionY = 60;
+directLinkPrompt.background.sourceLeft = 642;
+directLinkPrompt.background.sourceTop = 727;
+directLinkPrompt.background.sourceWidth = 74;
+directLinkPrompt.background.sourceHeight = 291;
 
 
 // let bgImage = new ui.LargeIcon('images/welcomeBg.png', 0, 0)

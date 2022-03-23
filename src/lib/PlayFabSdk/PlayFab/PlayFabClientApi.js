@@ -1,4 +1,4 @@
-/// <reference path="../typings/PlayFab/PlayFabClientApi.d.ts" />
+/// <reference path="../Typings/PlayFab/PlayFabClientApi.d.ts" />
 
 var PlayFab = typeof PlayFab != "undefined" ? PlayFab : {};
 
