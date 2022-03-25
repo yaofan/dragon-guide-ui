@@ -709,3 +709,4 @@ PlayFab.AdminApi = {
 
 var PlayFabAdminSDK = PlayFab.AdminApi;
 
+export { PlayFab, PlayFabAdminSDK }

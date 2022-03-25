@@ -1,10 +1,16 @@
 import { UserData } from "@decentraland/Identity";
 import { PlayFab, PlayFabClientSDK } from '../lib/PlayFabSdk/PlayFab/PlayFabClientApi';
+import { PlayFab as AdminPlayFab, PlayFabAdminSDK } from '../lib/PlayFabSdk/PlayFab/PlayFabAdminApi';
 import { sceneMapData, sceneMapItemType } from './const';
 
-export const loginToPlayFab = (playerIfo: UserData | null, sceneData: any, callback: Function) => {
+PlayFab.settings.titleId = "5A73B";
+
+AdminPlayFab.settings.titleId = "5A73B";
+AdminPlayFab.settings.developerSecretKey= "EZFHFIHKXSAG4K9KFZIAF1B337FUE1QC3S44JKBBD8ISCYHNT4";
+
+export const loginToPlayFab = (playerIfo: UserData | null, sceneData: any, scenePlayersNum: number, callback: Function) => {
     if(playerIfo === null) return;
-    PlayFab.settings.titleId = "5A73B";
+    
     const loginRequest = {
         DisplayName: playerIfo.displayName,
         Title: PlayFab.settings.titleId,
@@ -14,46 +20,34 @@ export const loginToPlayFab = (playerIfo: UserData | null, sceneData: any, callb
         },
         CreateAccount: true
     };   
-    PlayFabClientSDK.LoginWithCustomID(loginRequest, (result: any, error: any)=> { LoginCallback(result, error, sceneData, callback) });
+    PlayFabClientSDK.LoginWithCustomID(loginRequest, (result: any, error: any)=> { LoginCallback(result, error, sceneData, scenePlayersNum, callback) });
 }
 
-const LoginCallback = async (result: any, error: any, sceneData : any, callback: Function) => {
+const LoginCallback = async (result: any, error: any, sceneData : any, scenePlayersNum: number, callback: Function) => {
     if(result !== null) {
-        log("login to playfab success");
-        const allSceneData = await getAllScenePlayerStatistics();
+        log("login to playfab success111");
         // get unique title from current scene json
         const sceneTitle = sceneData.land.sceneJsonData.display.title;
-        const currentSceneNum = allSceneData.find((item: any) => item["StatisticName"] === sceneTitle)?.["Value"] || 0;
-        PlayFabClientSDK.UpdatePlayerStatistics({
-            "Statistics": [
-                {
-                "StatisticName": sceneTitle,
-                "Value": currentSceneNum + 1
-                }
-            ]
-        }, async (result: any, error: any) =>{
-            if(result !== null && callback) {
-                // const newAllSceneData = allSceneData.map((item: any) => {
-                //     if(item["StatisticName"] === sceneTitle){
-                //         item["Value"] = item["Value"] + 1;
-                //     }
-                //     return item;
-                // })
-                const newAllSceneData = await getAllScenePlayerStatistics();
-                callback(newAllSceneData);
+        PlayFabAdminSDK.SetTitleData({
+            "Key": `${sceneTitle}_players_num`,
+            "Value": scenePlayersNum.toString()
+          }, async (result: any, error: any) =>{
+            if(callback) {
+                const allSceneData = await getAllScenePlayerStatistics();
+                callback(allSceneData);
             }
         });
     }
 }
 
 const getAllScenePlayerStatistics = async () => {
-    const allScene = sceneMapData.map((item)=> item.sceneId);
+    const allScene = sceneMapData.map((item)=> `${item.sceneTitle}_players_num`);
     let result = [];
-    const resp = await PlayFabClientSDK.GetPlayerStatistics({
-        "StatisticName": allScene
-    });
-    if(resp && resp.code === 200 && resp.data && resp.data.Statistics) {
-        result = resp.data.Statistics
+    const resp = await PlayFabAdminSDK.GetTitleData({
+        "Keys": allScene
+      });
+    if(resp && resp.code === 200 && resp?.data?.Data) {
+        result = resp.data.Data
     }
     return result;
 }

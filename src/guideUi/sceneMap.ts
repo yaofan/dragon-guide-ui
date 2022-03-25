@@ -1,7 +1,8 @@
 
 import * as ui from '@dcl/ui-scene-utils';
 import { getParcel } from '@decentraland/ParcelIdentity';
-import { getPlayerData } from "@decentraland/Players"
+import { getPlayersInScene } from "@decentraland/Players";
+import { getUserData } from "@decentraland/Identity"
 import { sceneMapData, sceneMapItemType } from './const';
 import { loginToPlayFab, leavePlayFab } from './operator';
 
@@ -25,48 +26,63 @@ safariMapCloseIcon.image.onClick = new OnPointerDown((e) => {
     safariMap.hide();
 });
 
+sceneMapData.map((item) => {
+    const icon = safariMap.addIcon("images/guideSprite.png", item.iconPosX, item.iconPosY, 27, 35, { sourceLeft: 833, sourceTop: 650, sourceWidth: 27, sourceHeight: 35 });
+    icon.image.hAlign = "left";
+    icon.image.vAlign = "top";
+    icon.image.isPointerBlocker = true;
+    icon.image.onClick = new OnPointerDown((e) => {
+        safariMap.hide();
+        showScenePrompt(item);
+    });
+    const name = safariMap.addText(item.name, item.iconPosX, item.iconPosY - 38, new Color4(1,1,1,1), 12);
+    name.text.hAlign = "left";
+    name.text.vAlign = "top";
+    name.text.width = 80;
+    name.text.height = 14;
+    name.text.hTextAlign = "center";
+    name.text.vTextAlign = "top";
+    name.text.positionX = item.iconPosX - 25;
+    if(item.sceneTitle === 'darkCity') {
+        name.text.positionY = item.iconPosY + 18
+    }
+    else if(item.sceneTitle === 'fantasticLand') {
+        name.text.positionX = item.iconPosX - 40;
+    }
+})
+
 let playerData : any;
 let sceneData : any;
-let allSceneCurrentPlayersArray: any;
 
 onEnterSceneObservable.add(async (player) => {
-    const userId = player.userId;
-    playerData = await getPlayerData({userId})
+    playerData = await getUserData();
+    if (player.userId !== playerData?.userId)return;
+    let allPlayers = await getPlayersInScene();
+    const scenePlayersNum = allPlayers.length;
     sceneData = await getParcel();
-    loginToPlayFab(playerData, sceneData, (allSceneData: any) => {
+    loginToPlayFab(playerData, sceneData, scenePlayersNum, (allSceneData: any) => {
         //location icon
-        log(allSceneData, 7777);
-        allSceneCurrentPlayersArray = allSceneData;
+        log(allSceneData, 5555);
         sceneMapData.map((item) => {
-            const icon = safariMap.addIcon("images/guideSprite.png", item.iconPosX, item.iconPosY, 27, 35, { sourceLeft: 833, sourceTop: 650, sourceWidth: 27, sourceHeight: 35 });
-            icon.image.hAlign = "left";
-            icon.image.vAlign = "top";
-            icon.image.isPointerBlocker = true;
-            icon.image.onClick = new OnPointerDown((e) => {
-                safariMap.hide();
-                showScenePrompt(item);
-            });
-        
-            const name = safariMap.addText(item.name, item.iconPosX, item.iconPosY - 38, new Color4(1,1,1,1), 12);
-            name.text.hAlign = "left";
-            name.text.vAlign = "top";
-            name.text.width = 80;
-            name.text.height = 14;
-            name.text.hTextAlign = "center";
-            name.text.vTextAlign = "top";
-            name.text.positionX = item.iconPosX - 25;
-            if(item.sceneId === 'darkCity') {
-                name.text.positionY = item.iconPosY + 18
+            // let num = allSceneData.find((scene: any) => scene["StatisticName"] === item.sceneTitle)?.["Value"] || 0;
+            let num = allSceneData[`${item.sceneTitle}_players_num`];
+            const numText = safariMap.addText(`(${num})`, item.iconPosX, item.iconPosY - 50, new Color4(1,1,1,1), 12);
+            numText.text.hAlign = "left";
+            numText.text.vAlign = "top";
+            numText.text.width = 80;
+            numText.text.height = 14;
+            numText.text.hTextAlign = "center";
+            numText.text.vTextAlign = "top";
+            numText.text.positionX = item.iconPosX - 25;
+            if(item.sceneTitle === 'darkCity') {
+                numText.text.positionY = item.iconPosY + 18;
+                numText.text.positionX = item.iconPosX + 14;
             }
-            else if(item.sceneId === 'fantasticLand') {
-                name.text.positionX = item.iconPosX - 40;
+            else if(item.sceneTitle === 'fantasticLand') {
+                numText.text.positionX = item.iconPosX - 40;
             }
         })
     })
-})
-
-onLeaveSceneObservable.add((player) => {
-   leavePlayFab(sceneData, allSceneCurrentPlayersArray);
 })
 
 // scene map
