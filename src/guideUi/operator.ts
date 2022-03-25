@@ -52,16 +52,17 @@ const getAllScenePlayerStatistics = async () => {
     return result;
 }
 
-export const leavePlayFab = (sceneData : any, allSceneCurrentPlayersArray: any) => {
-    // get unique title from current scene json
-    const sceneTitle = sceneData.land.sceneJsonData.display.title;
-    const currentSceneNum = allSceneCurrentPlayersArray.find((item: any) => item["StatisticName"] === sceneTitle)?.["Value"] || 1;
-    PlayFabClientSDK.UpdatePlayerStatistics({
-        "Statistics": [
-            {
-            "StatisticName": sceneTitle,
-            "Value": currentSceneNum - 1
-            }
+export const getPlayFabBizText = async () => {
+    let result = [];
+    const resp = await PlayFabAdminSDK.GetTitleData({
+        "Keys": [
+            "safairText",
+            "safairScenes",
+            "deadTime"
         ]
-    });
+    })
+    if(resp && resp.code === 200 && resp?.data?.Data) {
+        result = resp.data.Data
+    }
+    return result;
 }
