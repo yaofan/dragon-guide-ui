@@ -19,7 +19,7 @@ safariMapBgImg.sourceWidth = 623;
 safariMapBgImg.sourceHeight = 650;
 
 // close btn
-const safariMapCloseIcon = safariMap.addIcon("images/guideSprite.png", -12, -12, 32, 32, { sourceLeft: 623, sourceTop: 411, sourceWidth: 65, sourceHeight: 65 });
+const safariMapCloseIcon = safariMap.addIcon("images/guideSprite.png", -12, -12, 32, 32, { sourceLeft: 623, sourceTop: 411, sourceWidth: 64, sourceHeight: 64 });
 safariMapCloseIcon.image.hAlign = "right";
 safariMapCloseIcon.image.vAlign = "top";
 safariMapCloseIcon.image.isPointerBlocker = true;

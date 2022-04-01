@@ -3,43 +3,6 @@ import './operator';
 import { safariMap } from './sceneMap';
 import { webLinks } from './const';
 
-const DeadTime = new Date("2022/3/27 23:59:59");
-
-// welcome text
-let welcomPrompt = new ui.CustomPrompt(ui.PromptStyles.DARK, 512, 334);
-welcomPrompt.background.opacity = 0.88;
-welcomPrompt.closeIcon.visible = false;
-let welcomeText = welcomPrompt.addText('Welcome to Dragon \nCity', -170, 100, new Color4(255,255,255,1), 32);
-welcomeText.text.hTextAlign = "left";
-
-let desText = welcomPrompt.addText('Enjoy your Metaverse jounary', -170, -30, new Color4(255,255,255,1), 18);
-desText.text.hTextAlign = "left";
-
-// let learnText = welcomPrompt.addText('Learn more', -170, -80, new Color4(255,255,255,1), 18);
-// learnText.text.hTextAlign = "left";
-// learnText.text.isPointerBlocker = true;
-// learnText.addComponent(
-//     new OnPointerDown(() => {
-//         openExternalURL("https://dragon.xyz")
-//     })
-// )
-
-// const bgImg = welcomPrompt.background;
-// bgImg.hAlign = 'center';
-// bgImg.vAlign = 'center';
-// bgImg.sourceLeft = 0;
-// bgImg.sourceTop = 727;
-// bgImg.sourceWidth = 642;
-// bgImg.sourceHeight = 419;
-
-const closeIcon = welcomPrompt.addIcon("images/guideSprite.png", -12, -12, 32, 32, { sourceLeft: 623, sourceTop: 411, sourceWidth: 65, sourceHeight: 65 });
-closeIcon.image.hAlign = "right";
-closeIcon.image.vAlign = "top";
-closeIcon.image.isPointerBlocker = true;
-closeIcon.image.onClick = new OnPointerDown((e) => {
-    welcomPrompt.hide();
-});
-
 // left plane for guide
 const guidePrompt = new ui.CustomPrompt(ui.PromptStyles.DARK, 200, 280);
 guidePrompt.closeIcon.visible = false;
@@ -82,13 +45,11 @@ guideText.paddingTop = 10;
 
 const safairBtn = guidePrompt.addButton("Dragon Safari", 0, -48, () => {
     safariMap.show();
-    welcomPrompt.hide();
 }, ui.ButtonStyles.DARK);
 safairBtn.image.height = 30;
 safairBtn.label.fontSize = 14;
 
 const learnBtn = guidePrompt.addButton("Learn More", 0, -86, () => {
-    welcomPrompt.hide();
     openExternalURL("https://dragon.xyz")
 }, ui.ButtonStyles.DARK);
 learnBtn.image.height = 30;
@@ -142,21 +103,6 @@ webLinks.map((item) => {
     icon.image.vAlign = "top";
     icon.image.isPointerBlocker = true;
     icon.image.onClick = new OnPointerDown((e) => {
-        welcomPrompt.hide();
         openExternalURL(item.url);
     });
 })
-
-// const uHide = directLinkPrompt.addText("U", 0, -150, new Color4(1,1,1,1), 12);
-// uHide.text.vAlign = "top";
-// uHide.text.hAlign = "left";
-// uHide.text.vTextAlign = "top";
-// uHide.text.hTextAlign = "center";
-// uHide.text.width = 37;
-// uHide.text.height = 20;
-// uHide.text.isPointerBlocker = true;
-// uHide.addComponent(
-//     new OnPointerDown(() => {
-//         log(1);
-//     })
-// )

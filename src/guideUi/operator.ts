@@ -1,22 +1,25 @@
 import { UserData } from "@decentraland/Identity";
 import { PlayFab, PlayFabClientSDK } from '../lib/PlayFabSdk/PlayFab/PlayFabClientApi';
 import { PlayFab as AdminPlayFab, PlayFabAdminSDK } from '../lib/PlayFabSdk/PlayFab/PlayFabAdminApi';
-import { sceneMapData, sceneMapItemType } from './const';
+import { sceneMapData } from './const';
 
-PlayFab.settings.titleId = "5A73B";
+const settings = {
+    titleId: "5A73B",
+    developerSecretKey: "EZFHFIHKXSAG4K9KFZIAF1B337FUE1QC3S44JKBBD8ISCYHNT4"
+};
 
-AdminPlayFab.settings.titleId = "5A73B";
-AdminPlayFab.settings.developerSecretKey= "EZFHFIHKXSAG4K9KFZIAF1B337FUE1QC3S44JKBBD8ISCYHNT4";
+PlayFab.settings.titleId = settings.titleId;
+AdminPlayFab.settings.titleId = settings.titleId;
+AdminPlayFab.settings.developerSecretKey= settings.developerSecretKey;
 
 export const loginToPlayFab = (playerIfo: UserData | null, sceneData: any, scenePlayersNum: number, callback: Function) => {
     if(playerIfo === null) return;
-    
     const loginRequest = {
-        DisplayName: playerIfo.displayName,
-        Title: PlayFab.settings.titleId,
         CustomId: playerIfo.userId,
         CustomTags: {
+            hasConnectedWeb3: playerIfo.hasConnectedWeb3,
             publicKey: playerIfo.publicKey,
+            displayName: playerIfo.displayName,
         },
         CreateAccount: true
     };   
@@ -25,7 +28,7 @@ export const loginToPlayFab = (playerIfo: UserData | null, sceneData: any, scene
 
 const LoginCallback = async (result: any, error: any, sceneData : any, scenePlayersNum: number, callback: Function) => {
     if(result !== null) {
-        log("login to playfab success111");
+        log("login to playfab success");
         // get unique title from current scene json
         const sceneTitle = sceneData.land.sceneJsonData.display.title;
         PlayFabAdminSDK.SetTitleData({

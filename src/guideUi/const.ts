@@ -1,7 +1,9 @@
+import * as utils from "@dcl/ecs-scene-utils";
+
 export const sceneMapData: sceneMapItemType[] = [
     {
         name: "dragonLive",
-        sceneTitle: "dragonLiveBBB",
+        sceneTitle: "dragonLiveA",
         fn: "",
         iconPosX: 45,
         iconPosY: -138,
@@ -125,13 +127,14 @@ export interface webLinkType {
 export function countdown(go_time: any, callback: Function){
     var now_time= getNowDate(8);
     var alltime: number  = go_time.getTime() - now_time;
-    var minute = parseInt((alltime/1000/60)%60) ;  //  分钟
-    var hour =parseInt((alltime/1000/60/60)%24 ) ;   //小时
-    var day=parseInt((alltime/1000/60/60/24)%30);   //天数
+    var minute = ((alltime/1000/60)%60).toFixed() ;  //  分钟
+    var hour =((alltime/1000/60/60)%24).toFixed() ;   //小时
+    var day= ((alltime/1000/60/60/24)%30).toFixed();   //天数
     var deadTimeText =day+"d "+ hour+ "h "+ minute +"m" ;
-    setTimeout(() => {
+
+    utils.setTimeout(3000, () => {
         countdown(go_time, callback)
-    } ,3000);
+    });
     callback(deadTimeText);
 }
 
